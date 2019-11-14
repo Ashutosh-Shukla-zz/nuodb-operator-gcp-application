@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nuodb-operator
+  namespace: "$NAMESPACE"
+  labels:
+    app.kubernetes.io/name: "$APP_INSTANCE_NAME"
 spec:
   replicas: 1
   selector:
@@ -12,11 +15,11 @@ spec:
       labels:
         name: nuodb-operator
     spec:
-      serviceAccountName: nuodb-operator
+      serviceAccountName: $SERVICE_ACCOUNT
       containers:
         - name: nuodb-operator
           # Replace this with the built image name
-          image: $NUODB_OPERATTOR_IMAGE
+          image: $NUODB_OPERATOR_IMAGE
           command:
           - nuodb-operator
           imagePullPolicy: Always
@@ -31,3 +34,33 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "nuodb-operator"
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - ls; pwd; ls /; cp /usr/local/deploy/crds/*crd.yaml /crds/
+        image: $NUODB_OPERATOR_IMAGE
+        imagePullPolicy: Always
+        name: extract-crds
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /crds
+          name: crds
+      - command:
+        - sh
+        - -c
+        - kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodb_crd.yaml; kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodbinsightsserver_crd.yaml; kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodbycsbwl_crd.yaml
+        image: gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst:0.7.5
+        imagePullPolicy: IfNotPresent
+        name: inject-crds
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /crds
+          name: crds
+      volumes:
+      - emptyDir: {}
+        name: crds
