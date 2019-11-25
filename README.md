@@ -30,7 +30,7 @@ Google Kubernetes Engine cluster using Google Cloud Marketplace. Follow the
 You can use [Google Cloud Shell](https://cloud.google.com/shell/) or a local workstation in the
 further instructions.
 
-[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/Ashutosh-Shukla/nuodb-operator-gcp-application&cloudshell_open_in_editor=README.md)
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/nuodb/nuodb-operator-gcp-application&cloudshell_open_in_editor=README.md)
 
 ### Prerequisites
 
@@ -71,7 +71,7 @@ gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE"
 Clone this repo and the associated tools repo:
 
 ```shell
-git clone --recursive https://github.com/Ashutosh-Shukla/nuodb-operator-gcp-application
+git clone --recursive https://github.com/nuodb/nuodb-operator-gcp-application
 ```
 
 #### Install the Application resource definition
@@ -108,7 +108,7 @@ export NAMESPACE=nuodb
 Configure the container images:
 
 ```shell
-export NUODB_OPERATOR_IMAGE="marketplace.gcr.io/nuodb-public/nuodb-operator:2.0"
+export NUODB_OPERATOR_IMAGE="marketplace.gcr.io/nuodb-public/nuodb-operator:latest"
 ```
 
 The images above are referenced by
@@ -180,5 +180,5 @@ To view your app, open the URL in your browser.
 
 ### Create your Nuodb Applications
 
-Follow these
-[examples](https://github.com/nuodb/nuodb-operator)
+Follow this 
+[example](https://github.com/nuodb/nuodb-operator#deploy-the-nuodb-database)
