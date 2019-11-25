@@ -38,7 +38,7 @@ spec:
       - command:
         - sh
         - -c
-        - ls; pwd; ls /; cp /usr/local/deploy/crds/*crd.yaml /crds/
+        - ls; pwd; ls /; cp /usr/local/etc/nuodb-operator/crds/*crd.yaml /crds/
         image: $NUODB_OPERATOR_IMAGE
         imagePullPolicy: Always
         name: extract-crds
@@ -51,7 +51,7 @@ spec:
       - command:
         - sh
         - -c
-        - kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodb_crd.yaml; kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodbinsightsserver_crd.yaml; kubectl apply -f https://raw.githubusercontent.com/nuodb/nuodb-operator/master/deploy/crds/nuodb_v2alpha1_nuodbycsbwl_crd.yaml
+        - kubectl apply -f /crds/
         image: gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst:0.7.5
         imagePullPolicy: IfNotPresent
         name: inject-crds
