@@ -12,7 +12,7 @@ NAME ?= nuodb-operator
 APP_PARAMETERS ?= { \
   "APP_INSTANCE_NAME": "$(NAME)", \
   "NAMESPACE": "$(NAMESPACE)", \
-  "NUODB_OPERATOR_IMAGE": "gcr.io/nuodb-public/nuodb-operator:2.0.2" \
+  "NUODB_OPERATOR_IMAGE": "$(IMAGE)" \
 }
 
 TESTER_IMAGE ?= $(REGISTRY)/nuodb-operator/tester:$(TAG)

@@ -12,19 +12,99 @@ metadata:
 spec:
   descriptor:
     type: Nuodb Operator
-    version: v2.0.2
+    version: v2.0.3
     description: |-
-      The NuoDB Kubernetes Operator deploys the NuoDB database on OpenShift  3.11 or greater. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample application (ycsb) to quickly generate a configurable SQL workload against the database.  See: [NuoDb's github] (https://github.com/nuodb/nuodb-operator) for requirements.
+      The NuoDB Operator deploys the NuoDB database in Kubernetes. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample application (ycsb) to quickly generate a configurable SQL workload against the database.  See: [NuoDB's github](https://github.com/nuodb/nuodb-operator) for requirements and deployment instructions.
+
+      # About NuoDB
+
+      NuoDB provides a modern cloud-native, cloud-agnostic distributed SQL database that delivers on-demand scale-out and continuous availability for high throughput transactional workloads. Deploying new applications and delivering updates to existing applications rapidly are critical global business imperatives for enterprises today. NuoDB’s cloud-native distributed SQL database enables your organization to do both. Built on the radical notion that a database should never be what holds your applications or business back, we’ve liberated the enterprise-critical database from its inherent limitations. That frees businesses to focus on creating breakthrough solutions, built on a database designed for modern architectures. See: [NuoDB's website](https://nuodb.com) for more information.
     maintainers:
     - name: NuoDB
       url: https://cloud.google.com/solutions/#click-to-deploy
     links:
-    - description: 'User Guide: Google Click to Deploy NuoDB Operator'
+    - description: 'User Guide: NuoDB Operator Kubernetes Application'
       url: https://github.com:nuodb/nuodb-operator-gcp-application/README.md
     - description: Quick start with NuoDB Operator
       url: https://github.com/nuodb/nuodb-operator
     - description: NuoDB Documentation
       url: https://doc.nuodb.com
+    notes: |-
+
+      Once the NuoDB Application installs follow the below steps to create your database.  
+      
+      ### Required Tools Installation and Setup 
+
+      To setup your local environment please install [gcloud](https://cloud.google.com/sdk/) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+      ### Authorizing your Account
+
+      With gcloud installed in a local environment, log in as yourself:
+      
+      `gcloud auth login`
+
+      The values for CLUSTER and ZONE can be found under the "Details" tab.  With those values, set two environment variables in your local terminal (example values are provided):
+
+      ```
+      CLUSTER=cluster-1
+      ZONE=us-west1-a
+      ```
+
+      Configure kubectl authorization via gcloud by:
+      
+      `gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE"`
+
+      Bootstrap RBAC cluster-admin for your user:
+
+      ```
+      kubectl create clusterrolebinding cluster-admin-binding \
+        --clusterrole cluster-admin --user $(gcloud config get-value account)
+      ```
+
+      ### Deploying a NuoDB Database
+      
+      In the local terminal window view the operator details by typing:
+
+      `kubectl get deployments -o wide`
+
+      Create a file called nuodb_cr.yaml in your local terminal, using the contents below:
+
+      ```
+      apiVersion: nuodb.com/v2alpha1
+      kind: Nuodb
+      metadata:
+        name: nuodb-test
+      spec:
+        dbAvailability: manual
+        storageMode: ephemeral
+        insightsEnabled: true
+        adminCount: 1
+        adminStorageSize: 5G
+        adminStorageClass: standard
+        dbName: test1
+        dbUser: dba
+        dbPassword: secret
+        smMemory: 2Gi
+        smCount: 1
+        smCpu: "500m"
+        smStorageSize: 20G
+        smStorageClass: standard
+        engineOptions: ""
+        teCount: 1
+        teMemory: 2Gi
+        teCpu: "500m"
+        apiServer: https://domain:8888
+        container: nuodb/nuodb-ce:latest
+      ```
+
+      The file defines a NuoDB database with 1 Admin, 1 SM and 1 TE. You can configure different parameters as you like, for more information visit [Deploying NuoDB Database](https://github.com/nuodb/nuodb-operator#deploy-the-nuodb-database)
+
+      Apply the file to your environment with the following command:
+
+      `kubectl apply -f nuodb_cr.yaml`
+
+      Wait until at least the admin pods is ready.
+
   componentKinds:
   - group: apiextensions.k8s.io/v1beta1
     kind: CustomResourceDefinition
