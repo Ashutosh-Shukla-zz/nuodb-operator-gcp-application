@@ -33,12 +33,12 @@ spec:
   dbPassword: secret
   smMemory: 2Gi
   smCount: 1
-  smCpu: "1"
+  smCpu: "500m"
   smStorageSize: 20G
   smStorageClass: local-disk
   engineOptions: ""
   teCount: 1
   teMemory: 2Gi
-  teCpu: "1"
+  teCpu: "500m"
   apiServer: https://domain:8888
   container: nuodb/nuodb-ce:latest

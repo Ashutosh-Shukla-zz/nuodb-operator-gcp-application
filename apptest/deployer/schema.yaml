@@ -2,3 +2,30 @@ properties:
   testerImage:
     default: $REGISTRY/tester:$TAG
     type: string
+  SERVICE_ACCOUNT:
+    type: string
+    title: Cluster Admin Service Account
+    description: >-
+      Name of a service account in the target namespace that
+      has cluster-admin permissions. This is needed for the operator
+      to create Nuodb CRD's.
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+        - type: ClusterRole
+          rulesType: CUSTOM
+          rules:
+          - apiGroups:
+            - '*'
+            resources:
+            - '*'
+            verbs:
+            - '*'
+          - nonResourceURLs:
+            - '*'
+            verbs:
+            - '*'
+  NUODB_OPERATOR_IMAGE:
+    type: string
+    default: "gcr.io/nuodb-public/nuodb-operator:latest"
